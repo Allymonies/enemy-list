@@ -6,6 +6,8 @@ import uintFormat from 'biguint-format';
 import flakeId from 'flake-idgen';
 import { createConnection } from "typeorm";
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import authUser from './authUser';
+import { Enemy } from './entity/Enemy';
 
 let app = express();
 createConnection();
@@ -28,6 +30,37 @@ app.use(express.static('public', {extensions: ["html"]}));
 if (!devReact) {
     app.use(express.static('../web/build', {extensions: ["html"]}));
 }
+
+// Get enemies
+app.get('/api/enemies', async (req, res) => {
+    let enemyEntities = await Enemy.find({ order: { order: "ASC" } });
+    let enemies = enemyEntities.map(enemy => {
+        return {
+            name: enemy.name,
+            description: enemy.description
+        }
+    });
+
+    return res.status(200).json(enemies);
+})
+
+// Set enemies
+app.post('/api/enemies', authUser, async (req, res) => {
+    if (!req.body.enemies) {
+        res.status(400).json({error: "No enemies provided"});
+        return;
+    }
+    let enemies = req.body.enemies;
+    Enemy.clear();
+    for (let i = 0; i < enemies.length; i++) {
+        let enemy = new Enemy();
+        enemy.id = generateSnowflake();
+        enemy.order = i;
+        enemy.name = enemies[i].name;
+        enemy.description = enemies[i].description;
+        await enemy.save();
+    }
+})
 
 if (devReact) {
     app.use('/', createProxyMiddleware({ target: 'http://localhost:3000', changeOrigin: true, ws: true }));
