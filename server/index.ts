@@ -14,7 +14,7 @@ createConnection();
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 4610;
 
-const devReact = true;
+const devReact = false;
 
 var flakeIdGen = new flakeId({ datacenter: 0, worker: 0});
 
@@ -26,6 +26,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(cookieParser());
 app.use(busboy());
+app.use('/edit', (req, res, next) => {
+    if (!authUser(req)) {
+        res.redirect('/');
+        return;
+    } else {
+        next();
+    }
+});
 app.use(express.static('public', {extensions: ["html"]}));
 if (!devReact) {
     app.use(express.static('../web/build', {extensions: ["html"]}));
@@ -41,11 +49,14 @@ app.get('/api/enemies', async (req, res) => {
         }
     });
 
-    return res.status(200).json(enemies);
+    return res.status(200).json({"enemies": enemies});
 })
 
 // Set enemies
-app.post('/api/enemies', authUser, async (req, res) => {
+app.post('/api/enemies', async (req, res) => {
+    if (!authUser(req)) {
+        return res.status(401).send("Unauthorized");
+    }
     if (!req.body.enemies) {
         res.status(400).json({error: "No enemies provided"});
         return;
@@ -60,6 +71,7 @@ app.post('/api/enemies', authUser, async (req, res) => {
         enemy.description = enemies[i].description;
         await enemy.save();
     }
+    return res.status(200).json({success: true});
 })
 
 if (devReact) {
