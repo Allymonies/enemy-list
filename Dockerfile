@@ -13,7 +13,7 @@ RUN cd /temp/web/dev && npm install
 # this will cache them and speed up future builds
 FROM bun as install_bun
 RUN mkdir -p /temp/server/dev
-COPY web/package.json web/bun.lockb /temp/server/dev/
+COPY server/package.json server/bun.lockb /temp/server/dev/
 RUN cd /temp/server/dev && bun install
 
 # copy node_modules from temp directory
