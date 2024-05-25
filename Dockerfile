@@ -47,7 +47,6 @@ COPY --from=prerelease /usr/src/app/server/package.json .
 
 # run the app
 ARG PORT=4610
-USER bun
 EXPOSE $PORT/tcp
 WORKDIR /usr/src/app/server
 ENTRYPOINT ["npm", "run", "start"]
