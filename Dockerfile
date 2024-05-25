@@ -42,8 +42,9 @@ RUN npm run build
 FROM base AS release
 COPY --from=install /temp/web/dev/node_modules web/node_modules
 COPY --from=install /temp/server/dev/node_modules server/node_modules
-COPY --from=prerelease /usr/src/app/server/index.ts .
-COPY --from=prerelease /usr/src/app/server/package.json .
+COPY --from=prerelease /usr/src/app/server/index.ts server/index.ts
+COPY --from=prerelease /usr/src/app/server/package.json server/package.json
+COPY --from=production /usr/src/app/web/build web/build
 
 # run the app
 ARG PORT=4610
