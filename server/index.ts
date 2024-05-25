@@ -83,6 +83,6 @@ if (devReact) {
 }
 
 console.log("Starting server");
-const server = app.listen(port, '127.0.0.1', async function () {
+const server = app.listen(port, '0.0.0.0', async function () {
     console.log("enemy list server started");
 })
