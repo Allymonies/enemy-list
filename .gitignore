@@ -76,5 +76,3 @@ typings/
 .fusebox/
 
 ormconfig.json
-authUser.ts
-server/authUser.ts

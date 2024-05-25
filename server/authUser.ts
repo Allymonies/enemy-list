@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 export default function authUser(req) {
-    return true;
+    return req.headers && process.env.ALLOWED_USER && req.headers["x-whomst-uuid"] === process.env.ALLOWED_USER;
 }
