@@ -1,6 +1,6 @@
 import {Entity, Column, PrimaryColumn, Index, BaseEntity} from "typeorm";
 
-@Entity()
+@Entity("enemy")
 export class Enemy extends BaseEntity {
 
     @Index({ unique: true })
